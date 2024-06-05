@@ -16,7 +16,7 @@ value = stb.st_timeline_bidirectional(data)
 """
 
 # Local or web? 
-_RELEASE = True
+_RELEASE = False
 
 # We work locally with an NPM dev server during development if release if False.
 if not _RELEASE:

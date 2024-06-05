@@ -59,6 +59,36 @@ function onRender(event: Event): void {
       // TIMELINE OBJECT
       const timeline = new Timeline(container, timelineData.data, additionalOptions);
 
+      // ADD EVENT LISTENER TO SEND DATA TO PYTHON WHEN TIMELINE IS LOADED.
+      timeline.on('loaded', (data: any) => {
+        console.log('timeline loaded');
+        // If we have a title slide and we've just loaded it, we return title: 
+        // Create an object to hold the output data:
+        let output = {
+          text:{headline:"",text:""}, 
+          title:false, 
+          index: 0
+        };
+
+        // Check for a title: 
+        if (data && data.title){
+          output.title = true;
+        }
+        else if (data && data.events && data.events.length > 0 && timelineData.startIndex){
+          // Get the event from the events array:
+          const event = data.events[timelineData.startIndex];
+          if (event.text && event.text.headline){
+            output.text.headline = event.text.headline;
+          }
+          if (event.text && event.text.text){
+            output.text.text = event.text.text;
+          }
+        }
+        // Send the output to Python:
+        Streamlit.setComponentValue(output);
+      });
+
+
       // CHANGE EVENT LISTENER TO SEND NEW DATA TO PYTHON WHEN SLIDE CHANGES.
       timeline.on('change', (tl_data: any) => {
 
